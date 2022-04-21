@@ -55,7 +55,7 @@ def count_rotations_binary(nums):
             elif nums[mid] > nums[-1]:
                 low = mid + 1
             else:
-                high = mid
+                high = mid - 1
 
     return 0
 
