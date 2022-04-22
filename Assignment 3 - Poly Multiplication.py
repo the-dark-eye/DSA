@@ -95,10 +95,13 @@ def multiply_optimized(poly1, poly2):
     (A0, A1), (B0, B1) = split(poly1, poly2)
     
     Y = multiply_optimized(add(A0, A1), add(B0, B1))
-    U, Z = multiply_optimized(A0, B0), multiply_optimized(A1, B1)
-    Y_U_Z = add(Y, -1 * add(U, Z))
+    U = multiply_optimized(A0, B0)
+    Z = multiply_optimized(A1, B1)
+    Y_U_Z = add(Y, [-1 * i for i in add(U, Z)])
     
-    return add(add(U, increase_exponent(Y_U_Z, n//2)), increase_exponent(Z, n))
+    result = add(add(U, increase_exponent(Y_U_Z, n//2)), increase_exponent(Z, n))
+    
+    return result
     
 print(multiply_optimized(*test_case1))
 print(multiply_optimized(*test_case2))
