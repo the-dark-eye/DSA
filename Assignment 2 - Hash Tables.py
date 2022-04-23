@@ -6,26 +6,34 @@ MAX_HASH_TABLE_SIZE = 4096
 
 data_list = [None] * MAX_HASH_TABLE_SIZE
 
-assert len(data_list) == 4096
-assert data_list[99] == None
+assert len(data_list) == 4096   # Check if length of data_list is 4096
+assert data_list[99] == None    # Check if all entries of data_list are None
 
 def get_index(data_list, a_string):
-        """_summary_
-        """
-        
-        # Variable to store the result (updated after each iteration)
-        result = 0
-        
-        for a_character in a_string:
-            # Convert the character to a number (using ord)
-            a_number = ord(a_character)
-            # Update result by adding the number
-            result += a_number
-        
-        # Take the remainder of the result with the size of the data list
-        list_index = result % len(data_list)
-        return list_index
+    """Generate an index for a key in the data list
+
+    Args:
+        data_list (list): a list of key-value pairs
+        a_string (string): key to generate hash for
+
+    Returns:
+        int: index for the key
+    """
+    # Variable to store the result (updated after each iteration)
+    result = 0
     
+    for a_character in a_string:
+        # Convert the character to a number (using ord)
+        a_number = ord(a_character)
+        # Update result by adding the number
+        result += a_number
+    
+    # Take the remainder of the result with the size of the data list
+    list_index = result % len(data_list)
+    return list_index
+
+# Check test cases for get_index function
+
 assert get_index(data_list, '') == 0
 assert get_index(data_list, 'Aakash') == 585
 assert get_index(data_list, 'Don O Leary') == 941
@@ -41,7 +49,7 @@ class BasicHashTable:
         idx = get_index(self.data_list, key)
         
         # 2. Store the key-value pair at the right index
-        self.data_list[idx] = value
+        self.data_list[idx] = (key, value)
     
     
     def find(self, key):
@@ -63,7 +71,7 @@ class BasicHashTable:
         idx = get_index(self.data_list, key)
         
         # 2. Store the new key-value pair at the right index
-        self.data_list[idx] = value
+        self.data_list[idx] = (key, value)
 
     
     def list_all(self):
@@ -72,7 +80,7 @@ class BasicHashTable:
     
 basic_table = BasicHashTable(max_size=1024)
 
-assert len(basic_table.data_list) == 1024
+assert len(basic_table.data_list) == 1024   # Check if length of data_list is 1024
 
 # Insert some values
 basic_table.insert('Aakash', '9999999999')
@@ -89,3 +97,109 @@ assert basic_table.find('Aakash') == '7777777777'
 
 # Get the list of keys
 assert basic_table.list_all() == ['Aakash', 'Hemanth']    
+
+# ----------------------------------------------------------------------------------
+
+def get_valid_index(data_list, key):
+    """Function to return a unique index for key in data_list
+
+    Args:
+        data_list (list): list containing key-value pairs
+        key (string): string to be hashed
+
+    Returns:
+        int: index of the key in data_list
+    """
+    
+    idx = get_index(data_list, key)     # Start with the index returned by get_index
+    
+    while True:
+        # Get the key-value pair stored at idx
+        kv = data_list[idx]
+        
+        # If it is None, return the index
+        if kv is None:
+            return idx
+        
+        # If the stored key matches the given key, return the index
+        k, _ = kv
+        if k == key:
+            return idx
+        
+        # Move to the next index
+        idx += 1
+        
+        # Go back to the start if you have reached the end of the array
+        if idx == len(data_list):
+            idx = 0
+        
+
+# Check test cases for get_valid_index function
+
+# Create an empty hash table
+data_list2 = [None] * MAX_HASH_TABLE_SIZE
+
+# New key 'listen' should return expected index
+assert get_valid_index(data_list2, 'listen') == 655
+
+# Insert a key-value pair for the key 'listen'
+data_list2[get_index(data_list2, 'listen')] = ('listen', 99)
+
+# Colliding key 'silent' should return next index
+assert get_valid_index(data_list2, 'silent') == 656
+
+class ProbingHashTable:
+    def __init__(self, max_size=MAX_HASH_TABLE_SIZE):
+        # 1. Create a list of size `max_size` with all values None
+        self.data_list = [None] * max_size
+        
+    def insert(self, key, value):
+        # 1. Find the index for the key using get_valid_index
+        idx = get_valid_index(self.data_list, key)
+        
+        # 2. Store the key-value pair at the right index
+        self.data_list[idx] = (key, value)
+        
+    def find(self, key):
+        # 1. Find the index for the key using get_valid_index
+        idx = get_valid_index(self.data_list, key)
+        
+        # 2. Retrieve the data stored at the index
+        kv = self.data_list[idx]
+        
+        # 3. Return the value if found, else return None
+        return None if kv is None else kv[1]
+        
+    def update(self, key, value):
+        # 1. Find the index for the key using get_valid_index
+        idx = get_valid_index(self.data_list, key)
+        
+        # 2. Store the new key-value pair at the right index
+        self.data_list[idx] = (key, value)
+
+    
+    def list_all(self):
+        # 1. Extract the key from each key-value pair 
+        return [kv[0] for kv in self.data_list if kv is not None]
+    
+# Create a new hash table
+probing_table = ProbingHashTable()
+
+# Insert a value
+probing_table.insert('listen', 99)
+
+# Check the value
+assert probing_table.find('listen') == 99
+
+# Insert a colliding key
+probing_table.insert('silent', 200)
+
+# Check the new and old keys
+assert probing_table.find('listen') == 99 and probing_table.find('silent') == 200
+
+# Update a key
+probing_table.insert('listen', 101)
+
+# Check the value
+assert probing_table.find('listen') == 101
+assert probing_table.list_all() == ['listen', 'silent']
