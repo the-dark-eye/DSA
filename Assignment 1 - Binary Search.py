@@ -63,21 +63,19 @@ def count_rotations_binary(nums):
     N = len(nums)
     low = 0
     high = N
-    
-    if N > 1:   # If length of list is more than 1
-            
-        while low < high:   # Terminating condition
-            
-            mid = (low + high)//2
-            
-            if nums[mid] < nums[mid - 1]:   # Check if number at mid position is greater
-                                            # than the number preceeding it
-                return mid
-            elif nums[mid] > nums[-1]:  # Check if number at mid is greater than number at
-                                        # end of the list
-                low = mid + 1
-            else:
-                high = mid  # else change the length of search list to first half
+         
+    while low < high:   # Terminating condition
+        
+        mid = (low + high)//2
+        
+        if mid > 0 and nums[mid] < nums[mid - 1]:   # Check if number at mid position is greater
+                                                    # than the number preceeding it
+            return mid
+        elif nums[mid] < nums[-1]:  # Check if number at mid is greater than number at
+                                    # end of the list
+            high = mid
+        else:
+            low = mid + 1  # else change the length of search list to first half
 
     return 0    # Return 0 if lenght of list is 1 or less than 1
 
