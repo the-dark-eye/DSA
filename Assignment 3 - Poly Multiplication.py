@@ -7,7 +7,7 @@ Outputs: [6, 8, 19, 41, 38, 14]
 
 def multiply_basic(poly1, poly2):
     """Basic polynomial multiplication function by Brute Force method
-    Time Complexity: O(m2 + n2 + m*n)
+    Time Complexity: Cubic
     Space Complexity: Linear
     
     Args:
