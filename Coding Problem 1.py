@@ -7,3 +7,6 @@ Outputs: Subarray adding up to target sum
 
 # Try brute force
 
+def subarray(lst: list, target: int):
+    
+        
